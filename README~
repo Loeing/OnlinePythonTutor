@@ -1,12 +1,3 @@
-Basterdized version of Online Python Tutor. Removed security features to allow for trace of system calls. Fork works but only ever traces the parent.
-
-
-
-
-
-
-
-======
 Online Python Tutor -- http://pythontutor.com/ -- helps people overcome
 a fundamental barrier to learning programming: understanding what
 happens as the computer executes each line of a program's source code.

@@ -120,7 +120,7 @@ ALLOWED_STDLIB_MODULE_IMPORTS = ('math', 'random', 'datetime',
 
 # allow users to import but don't explicitly import it since it's
 # already been done above
-OTHER_STDLIB_WHITELIST = ('StringIO', 'io')
+OTHER_STDLIB_WHITELIST = ('StringIO', 'io', 'os', 'sys', 'posix', 'gc')
 
 # whitelist of custom modules to import into OPT
 # (TODO: support modules in a subdirectory, but there are various
@@ -169,13 +169,13 @@ def __restricted_import__(*args):
     # somewhat weak protection against imported modules that contain one
     # of these troublesome builtins. again, NOTHING is foolproof ...
     # just more defense in depth :)
-    for mod in ('os', 'sys', 'posix', 'gc'):
-      if hasattr(imported_mod, mod):
-        delattr(imported_mod, mod)
+    # for mod in ('sys', 'posix', 'gc'):
+    #  if hasattr(imported_mod, mod):
+    #    delattr(imported_mod, mod)
 
     return imported_mod
   else:
-    raise ImportError('{0} not supported'.format(args[0]))
+    return imported_mod# raise ImportError('{0} not supported'.format(args[0]))
 
 
 # Support interactive user input by:
@@ -416,7 +416,7 @@ def visit_function_obj(v, ids_seen_set):
     ids_seen_set.add(v_id)
 
     typ = type(v)
-    
+
     # simple base case
     if typ in (types.FunctionType, types.MethodType):
       yield v
@@ -1290,11 +1290,11 @@ class PGLogger(bdb.Bdb):
             for a in dir(sys.modules['posix']):
               delattr(sys.modules['posix'], a)
             # do the same with os
-            for a in dir(sys.modules['os']):
+            #for a in dir(sys.modules['os']):
               # 'path' is needed for __restricted_import__ to work
               # and 'stat' is needed for some errors to be reported properly
-              if a not in ('path', 'stat'):
-                delattr(sys.modules['os'], a)
+              #if a not in ('path', 'stat'):
+                #delattr(sys.modules['os'], a)
             # ppl can dig up trashed objects with gc.get_objects()
             import gc
             for a in dir(sys.modules['gc']):
@@ -1311,8 +1311,8 @@ class PGLogger(bdb.Bdb):
             #
             # Of course, this isn't a foolproof solution by any means,
             # and it might lead to UNEXPECTED FAILURES later in execution.
-            del sys.modules['os']
-            del sys.modules['os.path']
+            # del sys.modules['os']
+            # del sys.modules['os.path']
             del sys.modules['sys']
 
           self.run(script_str, user_globals, user_globals)
